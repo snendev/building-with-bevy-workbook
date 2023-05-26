@@ -1,0 +1,20 @@
+[package]
+name = "crabber"
+version = "0.1.0"
+authors = ["Sean Sullivan <me@snen.dev>"]
+workspace = ".."
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+bevy = "0.10.0"
+bevy_asset_loader = { version = "0.15.0", features = [ "2d" ] }
+
+[dev-dependencies]
+common_e2e = { path = "../lib/common-e2e" }
+
+[[test]]
+name = "e2e-crab-sprite"
+path = "e2e/crab-sprite.rs"
+harness = false
