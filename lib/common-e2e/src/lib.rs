@@ -24,7 +24,7 @@ impl<A> Test<A> {
             on_main_thread,
             "Integration test must be run on main thread!"
         );
-
+        println!("Running: {}", self.label);
         let mut app = App::new();
 
         app.insert_resource(WinitSettings {
