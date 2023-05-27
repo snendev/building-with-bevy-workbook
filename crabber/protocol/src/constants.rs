@@ -9,7 +9,7 @@ pub const LEVEL_HEIGHT_F32: f32 = 10.;
 pub const TILE_SIZE_I16: i16 = 64;
 pub const TILE_SIZE_F32: f32 = 64.;
 
-pub const BACKGROUND_Z: f32 = 1.;
+pub const BACKGROUND_Z: f32 = 0.;
 pub const LEVEL_Z: f32 = 3.;
 pub const PLAYER_Z: f32 = 5.;
 

@@ -7,8 +7,9 @@ the [Building With Bevy blog series](https://blog.snen.dev/building-with-bevy).
 Each commit in this repository represents a snapshot of the code at the end of
 each post (and potentially other useful checkpoints as well).
 
-This commit adds a local multiplayer test to the `crabber` crate, for comparison
-with the next commit, which implements online multiplayer.
+This commit adds a online multiplayer networking to `crabber` using
+[NAIA](https://github.com/naia-lib/naia). To do so, it breaks `crabber` into
+three distinct `protocol`, `server`, and `app` crates.
 
 Read
 [Building With Bevy Part 0](https://blog.snen.dev/building-with-bevy/00-introduction)

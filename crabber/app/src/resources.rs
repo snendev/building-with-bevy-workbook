@@ -1,10 +1,14 @@
 use bevy::{
     asset::{AssetServer, Assets},
-    prelude::{Handle, Resource, Vec2},
+    prelude::{Entity, Handle, Resource, Vec2},
     sprite::TextureAtlas,
 };
 
 use bevy_asset_loader::asset_collection::AssetCollection;
+
+use naia_bevy_client::CommandHistory;
+
+use crabber_protocol::messages::InputAction;
 
 #[derive(Resource, AssetCollection)]
 pub struct SpriteSheetAssets {
@@ -21,3 +25,6 @@ pub struct SpriteSheetAssets {
     #[asset(path = "spritesheets/raft.png")]
     pub raft: Handle<TextureAtlas>,
 }
+
+#[derive(Resource, Default)]
+pub struct TickHistory(pub CommandHistory<Vec<(Entity, InputAction)>>);
