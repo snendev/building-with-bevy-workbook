@@ -5,7 +5,7 @@ use bevy::{
 
 use common_e2e::Test;
 
-use crabber::{resources::SpriteSheetAssets, AppState, GraphicsPlugin as CrabGraphicsPlugin};
+use crabber_app::{resources::SpriteSheetAssets, AppState, GraphicsPlugin as CrabGraphicsPlugin};
 
 fn spawn_sprite(mut commands: Commands, spritesheets: Res<SpriteSheetAssets>) {
     commands.spawn(SpriteSheetBundle {

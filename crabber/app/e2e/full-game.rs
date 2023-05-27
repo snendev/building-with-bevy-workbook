@@ -1,16 +1,19 @@
 use bevy::{
-    prelude::{Commands, IntoSystemAppConfig, OnEnter, Res},
+    prelude::{Commands, IntoSystemAppConfig, OnEnter, Res, Transform},
     sprite::{SpriteSheetBundle, TextureAtlasSprite},
 };
 
 use common_e2e::Test;
 
-use crabber::{
-    components::{Crab, StepMotor, Transform},
+use crabber_protocol::{
+    components::{Crab, StepMotor, TileRow},
     constants::PLAYER_Z,
-    resources::SpriteSheetAssets,
-    AppState, CoreGameLoopPlugin, GraphicsPlugin as CrabGraphicsPlugin, InputPlugin, LevelPlugin,
-    TileRow, WASDControllerBundle,
+    tick::CoreGameLoopPlugin,
+};
+
+use crabber_app::{
+    resources::SpriteSheetAssets, AppState, ControllerPlugin, GraphicsPlugin as CrabGraphicsPlugin,
+    WASDControllerBundle,
 };
 
 fn spawn_sprite(mut commands: Commands, spritesheets: Res<SpriteSheetAssets>) {
@@ -29,12 +32,11 @@ fn spawn_sprite(mut commands: Commands, spritesheets: Res<SpriteSheetAssets>) {
 
 fn main() {
     Test {
-        label: "Test full game".to_string(),
+        label: "Test common full game".to_string(),
         setup: |app| {
             app.add_state::<AppState>()
-                .add_plugin(InputPlugin)
+                .add_plugin(ControllerPlugin)
                 .add_plugin(CoreGameLoopPlugin)
-                .add_plugin(LevelPlugin)
                 .add_system(spawn_sprite.in_schedule(OnEnter(AppState::InGame)));
         },
         setup_graphics: |app| {

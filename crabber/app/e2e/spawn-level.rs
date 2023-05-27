@@ -1,23 +1,43 @@
 use common_e2e::Test;
 
-use bevy::prelude::{Added, BuildChildren, Color, Commands, Entity, Or, Query, Transform, Vec2};
+use bevy::prelude::{
+    Added, BuildChildren, Color, Commands, Entity, IntoSystemAppConfig, NextState, OnEnter, Or,
+    Query, ResMut, Transform, Vec2,
+};
 
 use bevy_prototype_lyon::{
     prelude::{Fill, GeometryBuilder, ShapeBundle, ShapePlugin, Stroke},
     shapes::{Circle, Rectangle, RectangleOrigin},
 };
 
-use crabber::{
-    components::{Car, Crab, Raft},
+use crabber_protocol::{
+    components::{Car, Crab, Level, Raft},
     constants::TILE_SIZE_F32,
-    AppState, GraphicsPlugin as CrabGraphicsPlugin, LevelPlugin,
 };
+
+use crabber_app::{components::PredictionOf, AppState, GraphicsPlugin as CrabGraphicsPlugin};
+
+fn spawn_level(mut commands: Commands, mut state: ResMut<NextState<AppState>>) {
+    let level = Level::new_random();
+    let (car_bundles, raft_bundles) = level.create_level_bundles();
+    for bundle in car_bundles.into_iter() {
+        let entity = commands.spawn(bundle).id();
+        commands.entity(entity).insert(PredictionOf(entity));
+    }
+    for bundle in raft_bundles.into_iter() {
+        let entity = commands.spawn(bundle).id();
+        commands.entity(entity).insert(PredictionOf(entity));
+    }
+    commands.spawn(level);
+    state.set(AppState::InGame);
+}
 
 fn main() {
     Test {
         label: "Test spawning level entities".to_string(),
         setup: |app| {
-            app.add_state::<AppState>().add_plugin(LevelPlugin);
+            app.add_state::<AppState>()
+                .add_system(spawn_level.in_schedule(OnEnter(AppState::Connecting)));
         },
         setup_graphics: |app| {
             app.add_plugin(CrabGraphicsPlugin)

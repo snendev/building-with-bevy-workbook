@@ -5,11 +5,12 @@ use bevy::{
 
 use common_e2e::Test;
 
-use crabber::{
+use crabber_protocol::{
     components::{ConstantMotor, Direction},
-    resources::SpriteSheetAssets,
-    AppState, CoreGameLoopPlugin, GraphicsPlugin as CrabGraphicsPlugin,
+    tick::CoreGameLoopPlugin,
 };
+
+use crabber_app::{resources::SpriteSheetAssets, AppState, GraphicsPlugin as CrabGraphicsPlugin};
 
 fn spawn_raft(mut commands: Commands, spritesheets: Res<SpriteSheetAssets>) {
     commands.spawn((
@@ -18,10 +19,7 @@ fn spawn_raft(mut commands: Commands, spritesheets: Res<SpriteSheetAssets>) {
             sprite: TextureAtlasSprite::new(0),
             ..Default::default()
         },
-        ConstantMotor {
-            speed: 4.,
-            direction: Direction::Right,
-        },
+        ConstantMotor::new(4., Direction::Right),
     ));
 }
 

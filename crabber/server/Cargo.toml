@@ -1,0 +1,16 @@
+[package]
+name = "crabber_server"
+version = "0.1.0"
+authors = ["Sean Sullivan <me@snen.dev>"]
+workspace = "../.."
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+crabber_protocol = { path = "../protocol" }
+naia-bevy-server = { version = "0.20", features = ["transport_webrtc"]  }
+bevy_app = { version = "0.10", default-features=false }
+bevy_core = { version = "0.10", default-features=false }
+bevy_ecs = { version = "0.10", default-features=false }
+bevy_log = { version = "0.10", default-features=false }
