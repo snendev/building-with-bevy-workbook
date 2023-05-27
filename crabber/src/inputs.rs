@@ -44,6 +44,29 @@ impl WASDControllerBundle {
     }
 }
 
+#[derive(Bundle)]
+pub struct ArrowKeysControllerBundle {
+    input_manager: InputManagerBundle<Action>,
+}
+
+impl ArrowKeysControllerBundle {
+    pub fn new() -> Self {
+        ArrowKeysControllerBundle {
+            input_manager: InputManagerBundle::<Action> {
+                action_state: ActionState::default(),
+                input_map: InputMap::new([
+                    (KeyCode::Up, Action::Up),
+                    (KeyCode::Left, Action::Left),
+                    (KeyCode::Down, Action::Down),
+                    (KeyCode::Right, Action::Right),
+                    (KeyCode::Escape, Action::Menu),
+                ])
+                .build(),
+            },
+        }
+    }
+}
+
 fn register_inputs(
     mut player_query: Query<
         (&mut Transform, &mut StepMotor, &PlayerActionState),

@@ -3,7 +3,7 @@ use bevy::prelude::States;
 mod graphics;
 pub use graphics::GraphicsPlugin;
 mod inputs;
-pub use inputs::{Action, InputPlugin, WASDControllerBundle};
+pub use inputs::{Action, ArrowKeysControllerBundle, InputPlugin, WASDControllerBundle};
 mod level;
 pub use level::{LevelPlugin, TileColumn, TileRow};
 mod tick;

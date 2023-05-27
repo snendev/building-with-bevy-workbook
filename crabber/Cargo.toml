@@ -34,6 +34,11 @@ path = "e2e/inputs.rs"
 harness = false
 
 [[test]]
+name = "e2e-local-multi"
+path = "e2e/local-multi.rs"
+harness = false
+
+[[test]]
 name = "e2e-motors"
 path = "e2e/motors.rs"
 harness = false
