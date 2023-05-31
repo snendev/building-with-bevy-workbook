@@ -8,7 +8,7 @@ use bevy::{
 };
 
 use leafwing_input_manager::prelude::{
-    ActionState, Actionlike, InputManagerBundle, InputManagerPlugin, InputMap,
+  ActionState, Actionlike, InputManagerBundle, InputManagerPlugin, InputMap,
 };
 
 use crabber_protocol::{components::Knockout, messages::InputAction};
@@ -98,6 +98,17 @@ fn register_inputs(
     }
 }
 
+fn cleanup_removed_controllers(
+    mut commands: Commands,
+    removed_controllers: RemovedComponents<Controller>,
+) {
+    for entity in removed_controllers.iter() {
+        commands
+            .entity(entity)
+            .remove::<InputManagerBundle<Action>>();
+    }
+}
+
 pub struct ControllerPlugin;
 
 impl Plugin for ControllerPlugin {
@@ -108,6 +119,9 @@ impl Plugin for ControllerPlugin {
                 register_inputs
                     .in_base_set(CoreSet::PreUpdate)
                     .after(InputSystem),
+            )
+            .add_system(
+                cleanup_removed_controllers.in_base_set(CoreSet::PreUpdate).before(attach_inputs),
             );
     }
 }

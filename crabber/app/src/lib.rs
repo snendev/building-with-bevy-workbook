@@ -4,14 +4,11 @@ use bevy::prelude::{
 
 use naia_bevy_client::{ClientConfig, Plugin as ClientPlugin, ReceiveEvents};
 
+use crabber_controls::{ArrowKeysControllerBundle, ControllerPlugin, QueuedInputs, WASDControllerBundle};
 use crabber_protocol::protocol;
 
 pub mod components;
 mod connection;
-mod controller;
-pub use controller::{
-    ArrowKeysControllerBundle, ControllerPlugin, QueuedInputs, WASDControllerBundle,
-};
 mod events;
 mod graphics;
 pub use graphics::GraphicsPlugin;

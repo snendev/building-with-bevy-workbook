@@ -15,10 +15,14 @@ use crabber_protocol::{
     inputs::process_input,
     tick::CoreGameLoopPlugin,
 };
+use crabber_controls::{
+    ArrowKeysControllerBundle,
+    ControllerPlugin, 
+    QueuedInputs, WASDControllerBundle,
+}
 
 use crabber_app::{
-    components::PredictionOf, resources::SpriteSheetAssets, AppState, ArrowKeysControllerBundle,
-    ControllerPlugin, GraphicsPlugin as CrabGraphicsPlugin, QueuedInputs, WASDControllerBundle,
+    components::PredictionOf, resources::SpriteSheetAssets, AppState, GraphicsPlugin as CrabGraphicsPlugin,
 };
 
 fn init(

@@ -13,9 +13,12 @@ use crabber_protocol::{
     inputs::process_input,
 };
 
+use crabber_controls::{
+    QueuedInputs, WASDControllerBundle, ControllerPlugin,
+};
+
 use crabber_app::{
-    resources::SpriteSheetAssets, AppState, ControllerPlugin, GraphicsPlugin as CrabGraphicsPlugin,
-    QueuedInputs, WASDControllerBundle,
+    resources::SpriteSheetAssets, AppState, GraphicsPlugin as CrabGraphicsPlugin,
 };
 
 fn process_inputs(

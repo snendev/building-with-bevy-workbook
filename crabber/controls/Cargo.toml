@@ -1,0 +1,16 @@
+[package]
+name = "crabber_controls"
+version = "0.1.0"
+authors = ["Sean Sullivan <me@snen.dev>"]
+workspace = "../.."
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+crabber_protocol = { path = "../protocol" }
+bevy = "0.10.0"
+leafwing-input-manager = "0.9"
+
+[dev-dependencies]
+common_e2e = { path = "../../lib/common-e2e" }
