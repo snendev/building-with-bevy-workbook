@@ -1,6 +1,6 @@
-use naia_bevy_shared::{EntityProperty, Message, Serde};
+use naia_bevy_shared::{EntityProperty, Message};
 
-use crate::components::Direction;
+use crate::inputs::InputAction;
 
 #[derive(Message)]
 pub struct PlayerAssignmentMessage {
@@ -18,25 +18,6 @@ impl PlayerAssignmentMessage {
 impl Default for PlayerAssignmentMessage {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Serde)]
-pub enum InputAction {
-    Up,
-    Down,
-    Left,
-    Right,
-}
-
-impl InputAction {
-    pub fn get_direction(&self) -> Direction {
-        match self {
-            InputAction::Up => Direction::Up,
-            InputAction::Down => Direction::Down,
-            InputAction::Left => Direction::Left,
-            InputAction::Right => Direction::Right,
-        }
     }
 }
 

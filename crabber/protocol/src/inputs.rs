@@ -1,31 +1,22 @@
-use bevy_ecs::{
-    prelude::Entity,
-    query::{With, Without},
-    system::Query,
-};
+use naia_bevy_shared::Serde;
 
-use crate::{
-    components::{Controlled, Crab, Knockout, Position, StepMotor},
-    messages::InputAction,
-};
+use crate::components::Direction;
 
-pub fn process_input(action: InputAction, position: &mut Position, motor: &mut StepMotor) {
-    if !motor.is_running() {
-        motor.start(position, action.get_direction());
-    }
+#[derive(Clone, Copy, Debug, PartialEq, Serde)]
+pub enum InputAction {
+    Up,
+    Down,
+    Left,
+    Right,
 }
 
-pub fn process_inputs(
-    // Each player entity and the associated input action for this tick
-    inputs: Vec<(Entity, InputAction)>,
-    player_query: &mut Query<
-        (&mut Position, &mut StepMotor),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
-) {
-    for (entity, action) in inputs.into_iter() {
-        if let Ok((mut position, mut motor)) = player_query.get_mut(entity) {
-            process_input(action, &mut position, &mut motor);
+impl InputAction {
+    pub fn get_direction(&self) -> Direction {
+        match self {
+            InputAction::Up => Direction::Up,
+            InputAction::Down => Direction::Down,
+            InputAction::Left => Direction::Left,
+            InputAction::Right => Direction::Right,
         }
     }
 }

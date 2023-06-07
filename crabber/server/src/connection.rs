@@ -56,20 +56,15 @@ pub fn connect_events(
                     .id();
                 server.room_mut(&room_key).add_entity(&entity);
             }
-            let entity = commands
-                .spawn_empty()
-                .enable_replication(&mut server)
-                .insert(level)
-                .id();
+            let entity = commands.spawn(level).enable_replication(&mut server).id();
             server.room_mut(&room_key).add_entity(&entity);
         }
 
         // only spawn player entities for the first two players
         if num_players < 2 {
             let entity = commands
-                .spawn_empty()
+                .spawn((CrabBundle::new(), Controlled))
                 .enable_replication(&mut server)
-                .insert((CrabBundle::new(), Controlled))
                 .id();
 
             server.room_mut(&room_key).add_entity(&entity);
