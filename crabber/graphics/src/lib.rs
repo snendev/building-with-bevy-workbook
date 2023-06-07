@@ -1,8 +1,8 @@
 use bevy::{
     prelude::{
         in_state, info, Added, App, Assets, BuildChildren, Camera2dBundle, Changed, Color,
-        Commands, Entity, IntoSystemConfig, IntoSystemConfigs, Plugin, Quat, Query, Res,
-        SpatialBundle, Transform, With,
+        Commands, Component, Entity, IntoSystemConfigs, IntoSystemSetConfig, Plugin, Quat, Query,
+        Res, SpatialBundle, States, SystemSet, Transform, With,
     },
     sprite::{SpriteSheetBundle, TextureAtlas, TextureAtlasSprite},
 };
@@ -18,8 +18,6 @@ use bevy_ecs_tilemap::{
     TilemapBundle,
 };
 
-use naia_bevy_client::ReceiveEvents;
-
 use rand::Rng;
 
 use crabber_protocol::{
@@ -31,7 +29,11 @@ use crabber_protocol::{
     },
 };
 
-use crate::{resources::SpriteSheetAssets, AppState};
+mod resources;
+use resources::SpriteSheetAssets;
+
+#[derive(Component)]
+struct ShouldRender;
 
 fn direction_to_angle(direction: Direction) -> f32 {
     match direction {
@@ -55,6 +57,10 @@ fn position_to_transform(position: &Position, z: f32, rotated: bool) -> Transfor
 fn sync_transforms(mut position_query: Query<(&Position, &mut Transform, Option<&Crab>)>) {
     for (position, mut transform, crab) in position_query.iter_mut() {
         *transform = position_to_transform(position, transform.translation.z, crab.is_some());
+        if crab.is_some() {
+            info!("transform: {:?}", transform.translation);
+            // also https://github.com/bevyengine/bevy/blob/main/docs/profiling.md
+        }
     }
 }
 
@@ -208,27 +214,39 @@ fn camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 }
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, States)]
+pub enum AssetsState {
+    #[default]
+    Loading, // assets are not ready
+    Ready, // assets are ready
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, SystemSet)]
+pub struct GraphicsSet;
+
 pub struct GraphicsPlugin;
 
 impl Plugin for GraphicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(TilemapPlugin)
+            .add_state::<AssetsState>()
+            .configure_set(GraphicsSet.run_if(in_state(AssetsState::Ready)))
             .add_loading_state(
-                LoadingState::new(AppState::Loading).continue_to_state(AppState::Connecting),
+                LoadingState::new(AssetsState::Loading).continue_to_state(AssetsState::Ready),
             )
-            .add_collection_to_loading_state::<_, SpriteSheetAssets>(AppState::Loading)
+            .add_collection_to_loading_state::<_, SpriteSheetAssets>(AssetsState::Loading)
             .add_startup_system(camera)
             .add_systems(
                 (
-                    handle_knockout.run_if(in_state(AppState::InGame)),
-                    setup_crab_sprites.run_if(in_state(AppState::InGame)),
-                    setup_car_sprites.run_if(in_state(AppState::InGame)),
-                    setup_raft_sprites.run_if(in_state(AppState::InGame)),
-                    setup_level_tilemap.run_if(in_state(AppState::InGame)),
-                    animate_sprites.run_if(in_state(AppState::InGame)),
-                    sync_transforms.run_if(in_state(AppState::InGame)),
+                    handle_knockout,
+                    setup_crab_sprites,
+                    setup_car_sprites,
+                    setup_raft_sprites,
+                    setup_level_tilemap,
+                    animate_sprites,
+                    sync_transforms,
                 )
-                    .after(ReceiveEvents),
+                    .in_set(GraphicsSet),
             );
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "crabber_app"
+name = "crabber_graphics"
 version = "0.1.0"
 authors = ["Sean Sullivan <me@snen.dev>"]
 workspace = "../.."
@@ -8,21 +8,27 @@ license = "MIT OR Apache-2.0"
 publish = false
 
 [dependencies]
-crabber_controller = { path = "../controller" }
-crabber_core = { path = "../core" }
-crabber_graphics = { path = "../graphics" }
 crabber_protocol = { path = "../protocol" }
 bevy = "0.10.0"
 bevy_asset_loader = { version = "0.15.0", features = [ "2d" ] }
 bevy_ecs_tilemap = { version = "0.10", features = [ "atlas" ] }
-leafwing-input-manager = "0.9"
-naia-bevy-client = { version = "0.20", features = ["transport_webrtc"]  }
 rand = "0.8"
 
 [dev-dependencies]
 common_e2e = { path = "../../lib/common-e2e" }
+bevy_prototype_lyon = "*"
 
 [[test]]
-name = "e2e-full-client"
-path = "e2e/full-client.rs"
+name = "e2e-crab-sprite"
+path = "e2e/crab-sprite.rs"
+harness = false
+
+[[test]]
+name = "e2e-tilemap"
+path = "e2e/tilemap.rs"
+harness = false
+
+[[test]]
+name = "e2e-spawn-level"
+path = "e2e/spawn-level.rs"
 harness = false

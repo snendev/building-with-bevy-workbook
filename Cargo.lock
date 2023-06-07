@@ -1708,11 +1708,53 @@ dependencies = [
  "bevy",
  "bevy_asset_loader",
  "bevy_ecs_tilemap",
- "bevy_prototype_lyon",
  "common_e2e",
+ "crabber_controller",
+ "crabber_core",
+ "crabber_graphics",
  "crabber_protocol",
  "leafwing-input-manager",
  "naia-bevy-client",
+ "rand",
+]
+
+[[package]]
+name = "crabber_controller"
+version = "0.1.0"
+dependencies = [
+ "bevy_app",
+ "bevy_ecs",
+ "bevy_input",
+ "crabber_core",
+ "crabber_protocol",
+ "leafwing-input-manager",
+]
+
+[[package]]
+name = "crabber_core"
+version = "0.1.0"
+dependencies = [
+ "bevy_app",
+ "bevy_ecs",
+ "bevy_log",
+ "bevy_math",
+ "bevy_utils",
+ "common_e2e",
+ "crabber_controller",
+ "crabber_graphics",
+ "crabber_protocol",
+]
+
+[[package]]
+name = "crabber_graphics"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_asset_loader",
+ "bevy_ecs_tilemap",
+ "bevy_prototype_lyon",
+ "common_e2e",
+ "crabber_protocol",
  "rand",
 ]
 
@@ -1735,6 +1777,8 @@ dependencies = [
  "bevy_core",
  "bevy_ecs",
  "bevy_log",
+ "bevy_utils",
+ "crabber_core",
  "crabber_protocol",
  "naia-bevy-server",
 ]

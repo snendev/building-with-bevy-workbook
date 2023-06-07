@@ -1,22 +1,24 @@
-use bevy::{
-    prelude::{Commands, IntoSystemAppConfig, NextState, OnEnter, Res, ResMut},
+use bevy_app::IntoSystemAppConfig;
+use bevy_ecs::{
+    prelude::{Commands, OnEnter},
+    schedule::SystemSet,
 };
 
 use common_e2e::Test;
 
+use crabber_core::{EntityActionMap, TickActions, TickPlugin};
 use crabber_protocol::{
     components::{Car, ConstantMotor, Controlled, Direction, Position, Raft},
     constants::TILE_SIZE_F32,
-    tick::CoreGameLoopPlugin,
 };
 
-use crabber_app::{resources::SpriteSheetAssets, AppState, GraphicsPlugin as CrabGraphicsPlugin};
+use crabber_graphics::{AssetsState, GraphicsPlugin as CrabGraphicsPlugin};
 
-fn set_state(mut state: ResMut<NextState<AppState>>) {
-    state.set(AppState::InGame);
+fn noop() -> Vec<TickActions> {
+    vec![(0, EntityActionMap::default())]
 }
 
-fn spawn_raft(mut commands: Commands, _spritesheets: Res<SpriteSheetAssets>) {
+fn spawn_raft(mut commands: Commands) {
     commands.spawn((
         Position::new(0., -TILE_SIZE_F32, Direction::Up),
         ConstantMotor::new(4., Direction::Right),
@@ -31,14 +33,15 @@ fn spawn_raft(mut commands: Commands, _spritesheets: Res<SpriteSheetAssets>) {
     ));
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, SystemSet)]
+struct TickSet;
+
 fn main() {
     Test {
         label: "Test constant motors".to_string(),
         setup: |app| {
-            app.add_state::<AppState>()
-                .add_plugin(CoreGameLoopPlugin)
-                .add_system(spawn_raft.in_schedule(OnEnter(AppState::InGame)))
-                .add_system(set_state.in_schedule(OnEnter(AppState::Connecting)));
+            app.add_plugin(TickPlugin::new(TickSet, noop))
+                .add_system(spawn_raft.in_schedule(OnEnter(AssetsState::Ready)));
         },
         setup_graphics: |app| {
             app.add_plugin(CrabGraphicsPlugin);

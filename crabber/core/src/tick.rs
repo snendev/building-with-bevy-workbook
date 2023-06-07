@@ -1,7 +1,7 @@
-use bevy_app::{App, Plugin};
-use bevy_ecs::prelude::{Commands, Entity, IntoSystemConfigs, Query, With, Without};
+use bevy_ecs::prelude::{Commands, Entity, Query, With, Without};
+use bevy_log::info;
 
-use crate::{
+use crabber_protocol::{
     components::{
         Car, ConstantMotor, Controlled, Crab, Knockout, Level, LevelRow, Position, Raft, Score,
         StepMotor, TileRow,
@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub fn tick_constant_motors(
-    motor_query: &mut Query<(&mut Position, &ConstantMotor), (Without<Crab>, With<Controlled>)>,
+    mut motor_query: Query<(&mut Position, &ConstantMotor), With<Controlled>>,
 ) {
     for (mut position, motor) in motor_query.iter_mut() {
         motor.drive_and_loop(&mut position);
@@ -18,21 +18,19 @@ pub fn tick_constant_motors(
 }
 
 pub fn tick_step_motors(
-    motor_query: &mut Query<
-        (&mut Position, &mut StepMotor),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
+    mut motor_query: Query<(&mut Position, &mut StepMotor), (Without<Knockout>, With<Controlled>)>,
 ) {
     for (mut position, mut motor) in motor_query.iter_mut() {
         motor.drive(&mut position);
+        info!(
+            "tick_motors: x: {}, y: {}, step: {:?}",
+            *position.x, *position.y, *motor.step,
+        );
     }
 }
 
 pub fn tick_score(
-    player_query: &mut Query<
-        (&mut Score, &Position),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
+    mut player_query: Query<(&mut Score, &Position), (Without<Knockout>, With<Controlled>)>,
 ) {
     for (mut score, position) in player_query.iter_mut() {
         let current_tile_row = (*position.y / 64.) as u16;
@@ -49,13 +47,13 @@ fn do_tiles_collide(position_a: &Position, position_b: &Position) -> bool {
 }
 
 pub fn tick_road_collisions(
-    commands: &mut Commands,
-    level_query: &Query<&Level>,
-    player_query: &Query<
+    mut commands: Commands,
+    level_query: Query<&Level>,
+    player_query: Query<
         (Entity, &Position, &StepMotor),
         (With<Crab>, Without<Knockout>, With<Controlled>),
     >,
-    car_query: &Query<&Position, (With<Car>, Without<Raft>, Without<Crab>, With<Controlled>)>,
+    car_query: Query<&Position, (With<Car>, Without<Crab>, With<Controlled>)>,
 ) {
     if let Ok(level) = level_query.get_single() {
         for (entity, position, motor) in player_query.iter() {
@@ -75,16 +73,13 @@ pub fn tick_road_collisions(
 
 // check whether the character is in the river, or carried by a raft
 pub fn tick_river_collisions(
-    commands: &mut Commands,
-    level_query: &Query<&Level>,
-    player_query: &mut Query<
+    mut commands: Commands,
+    level_query: Query<&Level>,
+    mut player_query: Query<
         (Entity, &mut Position, &StepMotor),
         (With<Crab>, Without<Knockout>, With<Controlled>),
     >,
-    raft_query: &Query<
-        (&Position, &ConstantMotor),
-        (With<Raft>, Without<Car>, Without<Crab>, With<Controlled>),
-    >,
+    raft_query: Query<(&Position, &ConstantMotor), (With<Raft>, Without<Crab>, With<Controlled>)>,
 ) {
     if let Ok(level) = level_query.get_single() {
         for (entity, mut position, motor) in player_query.iter_mut() {
@@ -113,73 +108,5 @@ pub fn tick_river_collisions(
                 commands.entity(entity).insert(Knockout);
             }
         }
-    }
-}
-
-fn tick_constant_motors_system(
-    mut motor_query: Query<(&mut Position, &ConstantMotor), (Without<Crab>, With<Controlled>)>,
-) {
-    tick_constant_motors(&mut motor_query);
-}
-
-fn tick_step_motors_system(
-    mut motor_query: Query<
-        (&mut Position, &mut StepMotor),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
-) {
-    tick_step_motors(&mut motor_query);
-}
-
-fn tick_road_collisions_system(
-    mut commands: Commands,
-    level_query: Query<&Level>,
-    player_query: Query<
-        (Entity, &Position, &StepMotor),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
-    car_query: Query<&Position, (With<Car>, Without<Raft>, Without<Crab>, With<Controlled>)>,
-) {
-    tick_road_collisions(&mut commands, &level_query, &player_query, &car_query);
-}
-
-fn tick_river_collisions_system(
-    mut commands: Commands,
-    level_query: Query<&Level>,
-    mut player_query: Query<
-        (Entity, &mut Position, &StepMotor),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
-    raft_query: Query<
-        (&Position, &ConstantMotor),
-        (With<Raft>, Without<Car>, Without<Crab>, With<Controlled>),
-    >,
-) {
-    tick_river_collisions(&mut commands, &level_query, &mut player_query, &raft_query);
-}
-
-pub fn tick_score_system(
-    mut player_query: Query<
-        (&mut Score, &Position),
-        (With<Crab>, Without<Knockout>, With<Controlled>),
-    >,
-) {
-    tick_score(&mut player_query)
-}
-
-pub struct CoreGameLoopPlugin;
-
-impl Plugin for CoreGameLoopPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(
-            (
-                tick_step_motors_system,
-                tick_constant_motors_system,
-                tick_road_collisions_system,
-                tick_river_collisions_system,
-                tick_score_system,
-            )
-                .chain(),
-        );
     }
 }

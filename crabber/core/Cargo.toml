@@ -1,0 +1,41 @@
+[package]
+name = "crabber_core"
+version = "0.1.0"
+authors = ["Sean Sullivan <me@snen.dev>"]
+workspace = "../.."
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+crabber_protocol = { path = "../protocol" }
+bevy_app = { version = "0.10", default-features=false }
+bevy_ecs = { version = "0.10", default-features=false }
+bevy_math = { version = "0.10", default-features=false }
+bevy_log = { version = "0.10", default-features=false }
+bevy_utils = { version = "0.10", default-features=false }
+
+[dev-dependencies]
+common_e2e = { path = "../../lib/common-e2e" }
+crabber_controller = { path = "../controller" }
+crabber_graphics = { path = "../graphics" }
+
+[[test]]
+name = "e2e-full-game"
+path = "e2e/full-game.rs"
+harness = false
+
+[[test]]
+name = "e2e-inputs"
+path = "e2e/inputs.rs"
+harness = false
+
+[[test]]
+name = "e2e-local-multi"
+path = "e2e/local-multi.rs"
+harness = false
+
+[[test]]
+name = "e2e-motors"
+path = "e2e/motors.rs"
+harness = false

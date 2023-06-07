@@ -8,7 +8,6 @@ pub mod components;
 pub mod constants;
 pub mod inputs;
 pub mod messages;
-pub mod tick;
 
 struct CrabberProtocolPlugin;
 

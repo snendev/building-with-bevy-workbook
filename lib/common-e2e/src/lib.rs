@@ -35,8 +35,8 @@ impl<A> Test<A> {
         .add_plugin(WorldInspectorPlugin::new())
         .add_system(bevy::window::close_on_esc);
 
-        (self.setup)(&mut app);
         (self.setup_graphics)(&mut app);
+        (self.setup)(&mut app);
         app.run();
     }
 }

@@ -66,7 +66,7 @@ impl ConstantMotor {
 pub struct StepMotor {
     // this value is None if the motor is not in motion
     // if this value is Some, the inner value is the current tick count in the lifecycle of a leap
-    step: Property<Option<usize>>,
+    pub step: Property<Option<usize>>,
 }
 
 const STEP_SPEED: f32 = 2.; // 4. pixels per tick
